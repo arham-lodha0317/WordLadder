@@ -8,24 +8,22 @@ public class LinkedList {
         count = 0;
     }
 
-    public void addFront(Object object){
+    public void add(Object object){
         Node node = new Node(object);
         node.setNextPtr(head);
         head = node;
         count++;
     }
 
-    public void addBack(Object object){
-        Node node = new Node(object);
-        tail.setNextPtr(node);
-        tail = node;
-        count++;
-    }
-
-    public Node rmFront(){
+    public Object rmFront(){
         Node front = head;
         head = front.getNextPtr();
-        return front;
+        count--;
+        return front.get();
+    }
+
+    public boolean isEmpty(){
+        return head == null;
     }
 
     public Object getHead() {
@@ -47,6 +45,17 @@ public class LinkedList {
 
     public int size() {
         return count;
+    }
+
+    public Object rmQueue(){
+        Node current  = head;
+        for (int i = 0; i < count - 2; i++) {
+            current = current.getNextPtr();
+        }
+        Node temp = current.getNextPtr();
+        current.setNextPtr(null);
+        count--;
+        return temp;
     }
 
     private class Node {
