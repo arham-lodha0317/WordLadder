@@ -1,4 +1,3 @@
-import javax.swing.*;
 import java.io.File;
 import java.util.*;
 
@@ -15,57 +14,82 @@ public class WordLadder {
             dictionary.add(dict.nextLine());
         }
 
-
-        while(input.hasNext()){
+        while(input.hasNext()) {
             String[] words = input.nextLine().split(" ");
             HashSet<String> used = new HashSet<>();
-            LinkedList wordLadders = new LinkedList();
+            LinkedList queue = new LinkedList();
 
             String start = words[0];
             String end = words[1];
-            if(!dictionary.contains(start) || !dictionary.contains(end)){
+
+            if (!dictionary.contains(end) && !dictionary.contains(start)) {
                 System.out.println("There is no Word Ladder between " + start + " and " + end);
             }
+            else {
+                queue.enqueue(new LinkedList());
+                ((LinkedList) queue.getHead()).push(start);
+                used.add(start);
+                boolean found = false;
 
-            wordLadders.add(new LinkedList());
-            ((LinkedList) wordLadders.getHead()).add(start);
-            used.add(start);
+                if (start.equals(end)) {
+                    System.out.println(start + " " + end);
+                } else {
+                    while (!queue.isEmpty() && !found) {
 
-            for (String s: dictionary) {
+                        LinkedList currentStack = (LinkedList) queue.dequeue();
+                        String currentWord = (String) currentStack.getHead();
 
-                if(s.length() == start.length() && !used.contains(s)){
-                    int diff = 0;
-                    for (int i = 0; i < s.length(); i++) {
-                        if (s.charAt(i) != ((String) ((LinkedList) wordLadders.getHead()).getHead()).charAt(i)) {
-                            diff++;
-                        }
-
-                    }
-
-                    if(diff == 1){
-                        used.add(s);
-                        LinkedList stack = new LinkedList();
-                        for (int i = 0; i < ((LinkedList) wordLadders.getHead()).size(); i++) {
-                            stack.add(((LinkedList) wordLadders.getHead()).rmFront());
-                        }
-                        wordLadders.rmQueue();
-                        stack.add(s);
-                        wordLadders.add(stack);
-                        if(s.equals(end)){
-                            for (int i = stack.size()-1; i <= 0; i++) {
-                                System.out.println((String)stack.get(i));
+                        if (currentWord.equals(end)) {
+                            while (!currentStack.isEmpty()) {
+                                System.out.print(currentStack.rmBack() + " ");
                             }
-                            break;
+
+                            System.out.println();
+
+                            found = true;
+
                         }
+                        else {
+                            for (String s :
+                                    dictionary) {
+
+                                if (s.length() == currentWord.length() && !used.contains(s) && compareStrings(currentWord, s) == 1) {
+
+                                    used.add(s);
+
+                                    LinkedList stack = currentStack.copyOf();
+
+                                    stack.push(s);
+
+                                    queue.enqueue(stack);
+
+                                }
+                            }
+                        }
+
                     }
+
+                }
+
+                if (queue.isEmpty()) {
+                    System.out.println("There is no Word Ladder between " + start + " and " + end);
                 }
             }
+        }
 
-            if(wordLadders.isEmpty()){
-                System.out.println("There is no Word Ladder between " + start + " and " + end);
+    }
+
+    public static int compareStrings(String s1 , String s2){
+        int diff = 0;
+        for (int i = 0; i < s2.length(); i++) {
+
+            if(!s1.substring(i, i+1).equals(s2.substring(i, i+1))){
+                diff++;
             }
 
         }
+
+        return diff;
     }
 
 }
